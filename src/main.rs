@@ -2,14 +2,15 @@ extern crate html5ever;
 extern crate url;
 
 use std::env;
-use std::io::{stdout, Write};
+use std::io::stdout;
+use std::io::Write;
 use url::Url;
 
-use crate::fetch::UrlState;
+use fetch::UrlState;
 
-mod crawler;
-mod fetch;
 mod parse;
+mod fetch;
+mod crawler;
 
 fn main() {
     let args: Vec<_> = env::args().collect();
@@ -19,7 +20,7 @@ fn main() {
         let start_url = Url::parse(start_url_string).unwrap();
         let domain = start_url
             .domain()
-            .expect("Can't find the domain in the url");
+            .expect("I can't find a domain in your URL");
 
         let mut success_count = 0;
         let mut fail_count = 0;
@@ -34,11 +35,11 @@ fn main() {
                     println!("{}", status);
                 }
             }
-        }
 
-        print!("Succeeded: {} Failed: {}\r", success_count, fail_count);
-        stdout().flush().unwrap();
+            print!("Succeeded: {} Failed: {}\r", success_count, fail_count);
+            stdout().flush().unwrap();
+        }
     } else {
-        println!("Usage: {} <url>", args[0]);
+        println!("Please provide a URL.");
     }
 }

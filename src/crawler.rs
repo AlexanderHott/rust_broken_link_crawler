@@ -1,6 +1,6 @@
 use std::collections::HashSet;
-use std::sync::mpsc::{channel, Receiver, Sender};
 use std::sync::{Arc, Mutex};
+use std::sync::mpsc::{channel, Receiver, Sender};
 use std::thread;
 use url::Url;
 
@@ -48,7 +48,6 @@ fn crawl_worker_thread(
         {
             let mut to_visit_val = to_visit.lock().unwrap();
             let mut active_count_val = active_count.lock().unwrap();
-
             if to_visit_val.is_empty() {
                 if *active_count_val > 0 {
                     continue;
@@ -60,6 +59,7 @@ fn crawl_worker_thread(
             *active_count_val += 1;
             assert!(*active_count_val <= THREADS);
         }
+
         {
             let mut visited_val = visited.lock().unwrap();
             if visited_val.contains(&current) {
@@ -94,7 +94,7 @@ fn crawl_worker_thread(
 }
 
 pub fn crawl(domain: &str, start_url: &Url) -> Crawler {
-    let to_visit = Arc::new(Mutex::new(vec![start_url.to_string()]));
+    let to_visit = Arc::new(Mutex::new(vec![start_url.serialize()]));
     let active_count = Arc::new(Mutex::new(0));
     let visited = Arc::new(Mutex::new(HashSet::new()));
 
@@ -117,5 +117,6 @@ pub fn crawl(domain: &str, start_url: &Url) -> Crawler {
             crawl_worker_thread(&domain, to_visit, visited, active_count, tx);
         });
     }
+
     crawler
 }

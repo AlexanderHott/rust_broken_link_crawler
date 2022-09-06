@@ -1,9 +1,9 @@
 use std::string::String;
 
-use html5ever::interface::Attribute;
+use html5ever::tendril::TendrilSink;
 use html5ever::parse_document;
 use html5ever::rcdom::{Handle, NodeData, RcDom};
-use html5ever::tendril::TendrilSink;
+use html5ever::interface::Attribute;
 
 pub fn parse_html(source: &str) -> RcDom {
     parse_document(RcDom::default(), Default::default())
@@ -35,7 +35,7 @@ pub fn get_urls(handle: Handle) -> Vec<String> {
     urls
 }
 
-pub fn get_elements_by_name(handle: Handle, element_name: &str, out: &mut Vec<NodeData>) {
+fn get_elements_by_name(handle: Handle, element_name: &str, out: &mut Vec<NodeData>) {
     let node = handle;
 
     if let NodeData::Element {
@@ -56,6 +56,6 @@ pub fn get_elements_by_name(handle: Handle, element_name: &str, out: &mut Vec<No
     }
 
     for n in node.children.borrow().iter() {
-        get_elements_by_name(n.clone(), element_name, out)
+        get_elements_by_name(n.clone(), element_name, out);
     }
 }
